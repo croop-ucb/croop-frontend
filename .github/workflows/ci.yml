@@ -25,3 +25,9 @@ jobs:
 
       - name: TypeScript check
         run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Expo config check
+        run: npx expo config --type public

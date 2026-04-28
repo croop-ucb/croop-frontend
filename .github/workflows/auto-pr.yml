@@ -62,4 +62,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge "$GITHUB_REF_NAME" --auto --squash
+          ISSUE_NUMBER="${{ steps.issue.outputs.issue_number }}"
+          BRANCH_NAME="${GITHUB_REF_NAME}"
+
+          if [ -n "$ISSUE_NUMBER" ]; then
+            gh pr merge "$BRANCH_NAME" \
+              --auto \
+              --squash \
+              --subject "Resolve issue #$ISSUE_NUMBER" \
+              --body "Closes #$ISSUE_NUMBER"
+          else
+            gh pr merge "$BRANCH_NAME" \
+              --auto \
+              --squash \
+              --subject "Atualização automática" \
+              --body "PR criada automaticamente."
+          fi

@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+  push:
+    branches:
+      - main
+      - "*"
+
 jobs:
   validate:
     name: Validate frontend

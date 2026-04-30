@@ -6,6 +6,7 @@ export default function App() {
     <View style={styles.container}>
       <Text>Aqui vai ser o app do croop!</Text>
       <Text>Mensagem testar workflow automático</Text>
+      <Text>Teste maluco</Text>
       <StatusBar style="auto" />
     </View>
   );

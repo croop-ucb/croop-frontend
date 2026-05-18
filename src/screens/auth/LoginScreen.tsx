@@ -1,24 +1,49 @@
 import React, { useState } from 'react';
 import {
   StyleSheet, View, Text, TextInput, TouchableOpacity,
-  SafeAreaView, KeyboardAvoidingView, Platform,
+  SafeAreaView, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import axios from 'axios';
 import { AuthStackParamList, RootStackParamList } from '../../types/navigation';
 import ScreenBackground from '../../components/ScreenBackground';
 import CroopLogo from '../../components/CroopLogo';
+import { login } from '../../services/authService';
+import { setToken } from '../../services/tokenStore';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
-  const handleLogin = () => {
-    navigation
-      .getParent<NativeStackNavigationProp<RootStackParamList>>()
-      ?.navigate('PlantList');
+  const handleLogin = async () => {
+    setErro(null);
+
+    if (!email.trim() || !password) {
+      setErro('Preencha o e-mail e a senha.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await login(email.trim(), password);
+      setToken(data.access_token);
+      navigation
+        .getParent<NativeStackNavigationProp<RootStackParamList>>()
+        ?.navigate('PlantList');
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        setErro('E-mail ou senha incorretos.');
+      } else {
+        setErro('Erro de conexão. Verifique sua internet.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,11 +60,12 @@ export default function LoginScreen({ navigation }: Props) {
           <Text style={styles.titlePage}>Login</Text>
 
           <View style={styles.form}>
-            <Text style={styles.label}>Usuário ou E-mail:</Text>
+            <Text style={styles.label}>E-mail:</Text>
             <TextInput
               style={styles.input}
               value={email}
               onChangeText={setEmail}
+              keyboardType="email-address"
               autoCapitalize="none"
             />
 
@@ -51,8 +77,13 @@ export default function LoginScreen({ navigation }: Props) {
               secureTextEntry
             />
 
-            <TouchableOpacity style={styles.buttonMain} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Entrar</Text>
+            {erro && <Text style={styles.erroText}>{erro}</Text>}
+
+            <TouchableOpacity style={styles.buttonMain} onPress={handleLogin} disabled={loading}>
+              {loading
+                ? <ActivityIndicator color="#FFF" />
+                : <Text style={styles.buttonText}>Entrar</Text>
+              }
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
@@ -82,6 +113,10 @@ const styles = StyleSheet.create({
   input: {
     width: '100%', height: 45, backgroundColor: 'rgba(255,255,255,0.35)',
     borderRadius: 20, marginBottom: 20, paddingHorizontal: 15, color: '#FFF',
+  },
+  erroText: {
+    color: '#FF6B6B', fontSize: 13, textAlign: 'center',
+    marginBottom: 10, marginTop: -8,
   },
   buttonMain: {
     backgroundColor: '#4CAF50', width: 160, height: 50, borderRadius: 15,

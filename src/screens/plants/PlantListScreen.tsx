@@ -1,35 +1,46 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
-  StyleSheet, View, Text, Image, FlatList,
-  TouchableOpacity, SafeAreaView, StatusBar, Dimensions,
+  StyleSheet, View, Text, FlatList,
+  TouchableOpacity, SafeAreaView, StatusBar, Dimensions, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
 import ScreenBackground from '../../components/ScreenBackground';
 import CroopLogo from '../../components/CroopLogo';
+import { listarPlantas } from '../../services/plantsService';
+import { PlantaResponse } from '../../types/api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PlantList'>;
 
 const { width } = Dimensions.get('window');
 
-const PLANTAS = [
-  {
-    id: '1',
-    nome: 'Espada de São Jorge',
-    porte: 'Médio',
-    ambiente: 'Meia-Sombra',
-    imagem: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv0s-4e5HYtGpHCLSzW2QoZ8W8E2nbXOVKew4uxkjdYZhS2gqbtAd4i9TZwssIaVjnRPBM1hOBO-6FvtROxCofXhmxdkAxkFBvIruKQOdJQA&s=10',
-  },
-];
-
 export default function PlantListScreen({ navigation }: Props) {
-  const renderItem = ({ item }: { item: typeof PLANTAS[0] }) => (
-    <TouchableOpacity style={styles.card} activeOpacity={0.8}>
-      <Image source={{ uri: item.imagem }} style={styles.cardImage} />
+  const [plantas, setPlantas] = useState<PlantaResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+
+  const fetchPlantas = useCallback(async () => {
+    setLoading(true);
+    setErro(null);
+    try {
+      const data = await listarPlantas();
+      setPlantas(data);
+    } catch {
+      setErro('Não foi possível carregar suas plantas.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useFocusEffect(useCallback(() => { fetchPlantas(); }, [fetchPlantas]));
+
+  const renderItem = ({ item }: { item: PlantaResponse }) => (
+    <View style={styles.card}>
       <View style={styles.cardContent}>
         <View style={styles.cardHeader}>
-          <Text style={styles.plantaNome}>{item.nome}</Text>
+          <Text style={styles.plantaNome}>{item.nome_personalizado ?? `Planta #${item.id_planta}`}</Text>
           <View style={styles.cardActions}>
             <TouchableOpacity>
               <Ionicons name="link-outline" size={20} color="#FFF" />
@@ -40,11 +51,52 @@ export default function PlantListScreen({ navigation }: Props) {
           </View>
         </View>
         <Text style={styles.plantaInfo}>
-          Porte: {item.porte} | Ambiente: {item.ambiente}
+          {item.porte ? `Porte: ${item.porte} | ` : ''}Ambiente: {item.ambiente}
         </Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <View style={styles.centerState}>
+          <ActivityIndicator size="large" color="#4CAF50" />
+        </View>
+      );
+    }
+
+    if (erro) {
+      return (
+        <View style={styles.centerState}>
+          <Text style={styles.stateText}>{erro}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={fetchPlantas}>
+            <Text style={styles.retryText}>Tentar novamente</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    if (plantas.length === 0) {
+      return (
+        <View style={styles.centerState}>
+          <Ionicons name="leaf-outline" size={64} color="rgba(255,255,255,0.3)" />
+          <Text style={styles.stateText}>Nenhuma planta cadastrada ainda.</Text>
+          <Text style={styles.stateSubText}>Adicione sua primeira planta!</Text>
+        </View>
+      );
+    }
+
+    return (
+      <FlatList
+        data={plantas}
+        keyExtractor={(item) => String(item.id_planta)}
+        renderItem={renderItem}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+      />
+    );
+  };
 
   return (
     <ScreenBackground overlayOpacity={0.8}>
@@ -73,19 +125,15 @@ export default function PlantListScreen({ navigation }: Props) {
           <Text style={styles.catalogTitle}>Meu Catálogo</Text>
         </View>
 
-        <FlatList
-          data={PLANTAS}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          contentContainerStyle={styles.list}
-          showsVerticalScrollIndicator={false}
-        />
+        {renderContent()}
 
-        <View style={styles.footer} pointerEvents="box-none">
-          <TouchableOpacity style={styles.btnAdd}>
-            <Text style={styles.btnAddText}>Adicionar planta</Text>
-          </TouchableOpacity>
-        </View>
+        {!loading && !erro && (
+          <View style={styles.footer} pointerEvents="box-none">
+            <TouchableOpacity style={styles.btnAdd} onPress={() => navigation.navigate('PlantCreate')}>
+              <Text style={styles.btnAddText}>Adicionar planta</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </SafeAreaView>
     </ScreenBackground>
   );
@@ -110,12 +158,16 @@ const styles = StyleSheet.create({
     borderRadius: 25, marginBottom: 25, overflow: 'hidden',
     backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
   },
-  cardImage: { width: '100%', height: 200 },
   cardContent: { padding: 20, backgroundColor: 'rgba(0,0,0,0.45)' },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   plantaNome: { color: '#FFF', fontSize: 18, fontWeight: 'bold' },
   cardActions: { flexDirection: 'row' },
   plantaInfo: { color: '#CCC', fontSize: 14, marginTop: 5 },
+  centerState: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 40 },
+  stateText: { color: '#FFF', fontSize: 16, textAlign: 'center', opacity: 0.7, marginTop: 16 },
+  stateSubText: { color: '#4CAF50', fontSize: 14, textAlign: 'center', marginTop: 8, opacity: 0.8 },
+  retryButton: { marginTop: 20, paddingVertical: 10, paddingHorizontal: 24, borderRadius: 20, borderWidth: 1, borderColor: '#4CAF50' },
+  retryText: { color: '#4CAF50', fontWeight: 'bold' },
   footer: { position: 'absolute', bottom: 30, right: 20, left: 20, alignItems: 'flex-end' },
   btnAdd: {
     borderWidth: 1.5, borderColor: '#4CAF50', paddingVertical: 12, paddingHorizontal: 25,

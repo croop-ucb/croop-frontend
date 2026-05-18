@@ -4,6 +4,7 @@ import { RootStackParamList } from '../types/navigation';
 import OnboardingScreen from '../screens/onboarding/OnboardingScreen';
 import AuthNavigator from './AuthNavigator';
 import PlantListScreen from '../screens/plants/PlantListScreen';
+import PlantFormScreen from '../screens/plants/PlantFormScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -13,6 +14,7 @@ export default function RootNavigator() {
       <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       <Stack.Screen name="Auth" component={AuthNavigator} />
       <Stack.Screen name="PlantList" component={PlantListScreen} />
+      <Stack.Screen name="PlantForm" component={PlantFormScreen} />
     </Stack.Navigator>
   );
 }

@@ -11,4 +11,5 @@ export type RootStackParamList = {
   Onboarding: undefined;
   Auth: NavigatorScreenParams<AuthStackParamList> | undefined;
   PlantList: undefined;
+  PlantForm: { plantId?: string } | undefined;
 };

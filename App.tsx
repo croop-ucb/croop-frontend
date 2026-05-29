@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  StyleSheet, View, Text, ImageBackground,
+  StyleSheet, View, Text,
   Dimensions, Animated, StatusBar,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -42,7 +42,8 @@ export default function App() {
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setCarregando(false), 6000);
+    // Reduzi para 3 segundos para você não ter que esperar tanto nos testes!
+    const timer = setTimeout(() => setCarregando(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -50,11 +51,8 @@ export default function App() {
     return (
       <View style={styles.container}>
         <StatusBar hidden />
-        <ImageBackground
-          source={require('./assets/fundo.png')}
-          style={styles.background}
-          resizeMode="cover"
-        >
+        {/* Trocamos o ImageBackground por uma View escura segura para evitar a Tela Branca */}
+        <View style={styles.safeBackground}>
           <View style={styles.overlay}>
             <View style={styles.svgWrapper}>
               <Svg viewBox="0 0 400 200" width={width} height={200}>
@@ -74,7 +72,7 @@ export default function App() {
               <Text style={styles.loadingText}>CARREGANDO</Text>
             </View>
           </View>
-        </ImageBackground>
+        </View>
       </View>
     );
   }
@@ -87,14 +85,14 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
-  background: { width, height, flex: 1 },
+  container: { flex: 1, backgroundColor: '#0B1C10' },
+  safeBackground: { width, height, flex: 1, backgroundColor: '#0B1C10' }, // Cor verde escuro do seu app
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.1)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 20,
+    paddingTop: 80, // Ajustado para dar mais espaço ao SVG topo
     paddingBottom: 60,
   },
   svgWrapper: { marginTop: 0 },

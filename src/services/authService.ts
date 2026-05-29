@@ -1,4 +1,4 @@
-import { api } from './api';
+import api from './api';
 import { CadastroResponse, LoginResponse } from '../types/api';
 
 export interface CadastroPayload {

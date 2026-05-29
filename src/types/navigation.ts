@@ -12,4 +12,5 @@ export type RootStackParamList = {
   Auth: NavigatorScreenParams<AuthStackParamList> | undefined;
   PlantList: undefined;
   PlantCreate: undefined;
+  Notification: undefined; 
 };

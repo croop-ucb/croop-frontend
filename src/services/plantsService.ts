@@ -1,4 +1,4 @@
-import { api } from './api';
+import api from './api';
 import { CriarPlantaPayload, PlantaResponse } from '../types/api';
 
 export async function listarPlantas(): Promise<PlantaResponse[]> {

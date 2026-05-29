@@ -1,4 +1,4 @@
-import { api } from './api';
+import api from './api';
 import { EspecieResponse } from '../types/api';
 
 export async function buscarEspecies(busca?: string): Promise<EspecieResponse[]> {

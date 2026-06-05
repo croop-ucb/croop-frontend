@@ -132,6 +132,9 @@ export default function PlantListScreen({ navigation }: Props) {
             >
               <Ionicons name="notifications-outline" size={28} color="#FFF" />
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+              <Ionicons name="person-circle-outline" size={36} color="#FFF" />
+            </TouchableOpacity>
           </View>
         </View>
 

@@ -47,10 +47,12 @@ export interface PlantaResponse {
 
 export interface NotificacaoResponse {
   id_notificacao: number;
-  id_usuario: number;
+  id_planta: number | null;
+  tipo_notificacao: string | null;
+  titulo: string;
   mensagem: string;
   lida: boolean;
-  data_criacao: string; // ou Date, dependendo de como o back-end retorna
+  data_envio: string;
 }
 
 // Se o seu back-end exigir um payload para criar/atualizar notificação:

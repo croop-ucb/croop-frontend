@@ -70,14 +70,14 @@ export default function NotificationScreen({ navigation }: Props) {
     const isLida = lidas.includes(item.id_notificacao) || item.lida;
 
     let dataFormatada = '--/--';
-    if (item.data_criacao) {
+    if (item.data_envio) {
       try {
-        dataFormatada = new Date(item.data_criacao).toLocaleDateString('pt-BR', {
+        dataFormatada = new Date(item.data_envio).toLocaleDateString('pt-BR', {
           hour: '2-digit',
           minute: '2-digit'
         });
       } catch (e) {
-        dataFormatada = String(item.data_criacao);
+        dataFormatada = String(item.data_envio);
       }
     }
 

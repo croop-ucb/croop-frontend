@@ -34,7 +34,7 @@ export default function LoginScreen({ navigation }: Props) {
       await saveToken(data.access_token);
       navigation
         .getParent<NativeStackNavigationProp<RootStackParamList>>()
-        ?.navigate('PlantList');
+        ?.navigate('MainTabs');
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         setErro('E-mail ou senha incorretos.');

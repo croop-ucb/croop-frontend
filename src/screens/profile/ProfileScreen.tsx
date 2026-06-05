@@ -44,13 +44,7 @@ export default function ProfileScreen({ navigation }: Props) {
         <StatusBar barStyle="light-content" />
 
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="arrow-back-outline" size={26} color="#FFF" />
-          </TouchableOpacity>
-          <View style={styles.logoContainer}>
-            <CroopLogo width={140} height={55} curve="M 40,80 Q 200,10 360,80" fontSize={55} shadowDy={4} />
-          </View>
-          <View style={styles.backButton} />
+          <CroopLogo width={140} height={55} curve="M 40,80 Q 200,10 360,80" fontSize={55} shadowDy={4} />
         </View>
 
         <View style={styles.content}>
@@ -107,14 +101,10 @@ export default function ProfileScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   header: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    marginTop: 10,
-    height: 70,
+    marginTop: 16,
+    marginBottom: 4,
   },
-  backButton: { width: 40, alignItems: 'flex-start' },
-  logoContainer: { flex: 1, alignItems: 'center' },
   content: {
     flex: 1,
     paddingHorizontal: 24,

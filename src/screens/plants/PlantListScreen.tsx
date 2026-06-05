@@ -128,12 +128,9 @@ export default function PlantListScreen({ navigation }: Props) {
           </View>
           <View style={styles.headerIcons}>
             <TouchableOpacity style={styles.iconSpacing}
-              onPress={() => navigation.navigate('Notification')}
+              onPress={() => (navigation as any).navigate('NotificationsTab')}
             >
               <Ionicons name="notifications-outline" size={28} color="#FFF" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-              <Ionicons name="person-circle-outline" size={36} color="#FFF" />
             </TouchableOpacity>
           </View>
         </View>

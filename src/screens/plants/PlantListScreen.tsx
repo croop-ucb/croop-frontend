@@ -132,7 +132,9 @@ export default function PlantListScreen({ navigation }: Props) {
             >
               <Ionicons name="notifications-outline" size={28} color="#FFF" />
             </TouchableOpacity>
-            <View style={styles.profileCircle} />
+            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+              <Ionicons name="person-circle-outline" size={36} color="#FFF" />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -162,10 +164,6 @@ const styles = StyleSheet.create({
   svgContainer: { flex: 1, alignItems: 'center', marginLeft: 55 },
   headerIcons: { flexDirection: 'row', alignItems: 'center' },
   iconSpacing: { marginRight: 15 },
-  profileCircle: {
-    width: 38, height: 38, borderRadius: 19,
-    backgroundColor: '#4CAF50', borderWidth: 1, borderColor: '#FFF',
-  },
   titleWrapper: { width: '100%', alignItems: 'center', justifyContent: 'center', marginVertical: 15 },
   catalogTitle: { color: '#FFF', fontSize: 26, fontWeight: '300', textAlign: 'center' },
   list: { paddingHorizontal: 20, paddingBottom: 150 },

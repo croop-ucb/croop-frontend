@@ -58,3 +58,25 @@ export interface CriarNotificacaoPayload {
   mensagem: string;
   id_usuario: number;
 }
+
+export interface ItemCronogramaResponse {
+  id_item_cronograma: number;
+  tipo_cuidado: string;
+  descricao: string | null;
+  data_prevista: string;
+  status_execucao: string | null;
+}
+
+export interface CronogramaResponse {
+  id_cronograma: number;
+  id_planta: number;
+  frequencia_semanal: number;
+  dias_sugeridos: string[];
+  horario_sugerido: string;
+  nivel_prioridade: string;
+  observacoes: string;
+  justificativa: string;
+  periodo_inicio: string;
+  periodo_fim: string | null;
+  itens: ItemCronogramaResponse[];
+}

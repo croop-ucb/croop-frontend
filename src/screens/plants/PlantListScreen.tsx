@@ -44,6 +44,7 @@ export default function PlantListScreen({ navigation }: Props) {
         nome: item.nome_personalizado ?? `Planta #${item.id_planta}`,
         ambiente: item.ambiente,
         porte: item.porte,
+        id_especie: item.id_especie,
       })}
       activeOpacity={0.8}
     >
@@ -56,6 +57,7 @@ export default function PlantListScreen({ navigation }: Props) {
               nome: item.nome_personalizado ?? `Planta #${item.id_planta}`,
               ambiente: item.ambiente,
               porte: item.porte,
+              id_especie: item.id_especie,
             })}>
               <Ionicons name="chevron-forward-outline" size={20} color="#FFF" />
             </TouchableOpacity>

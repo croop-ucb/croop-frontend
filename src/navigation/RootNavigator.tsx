@@ -6,6 +6,7 @@ import OnboardingScreen from '../screens/onboarding/OnboardingScreen';
 import AuthNavigator from './AuthNavigator';
 import PlantListScreen from '../screens/plants/PlantListScreen';
 import PlantCreateScreen from '../screens/plants/PlantCreateScreen';
+import PlantDetailScreen from '../screens/plants/PlantDetailScreen';
 import NotificationScreen from '../screens/notification/NotificationScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -30,6 +31,7 @@ export default function RootNavigator() {
       <Stack.Screen name="Auth" component={AuthNavigator} />
       <Stack.Screen name="PlantList" component={PlantListScreen} />
       <Stack.Screen name="PlantCreate" component={PlantCreateScreen} />
+      <Stack.Screen name="PlantDetail" component={PlantDetailScreen} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
     </Stack.Navigator>
   );

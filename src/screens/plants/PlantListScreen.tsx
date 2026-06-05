@@ -37,16 +37,27 @@ export default function PlantListScreen({ navigation }: Props) {
   useFocusEffect(useCallback(() => { fetchPlantas(); }, [fetchPlantas]));
 
   const renderItem = ({ item }: { item: PlantaResponse }) => (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('PlantDetail', {
+        plantaId: item.id_planta,
+        nome: item.nome_personalizado ?? `Planta #${item.id_planta}`,
+        ambiente: item.ambiente,
+        porte: item.porte,
+      })}
+      activeOpacity={0.8}
+    >
       <View style={styles.cardContent}>
         <View style={styles.cardHeader}>
           <Text style={styles.plantaNome}>{item.nome_personalizado ?? `Planta #${item.id_planta}`}</Text>
           <View style={styles.cardActions}>
-            <TouchableOpacity>
-              <Ionicons name="link-outline" size={20} color="#FFF" />
-            </TouchableOpacity>
-            <TouchableOpacity style={{ marginLeft: 15 }}>
-              <Ionicons name="pencil-outline" size={20} color="#FFF" />
+            <TouchableOpacity onPress={() => navigation.navigate('PlantDetail', {
+              plantaId: item.id_planta,
+              nome: item.nome_personalizado ?? `Planta #${item.id_planta}`,
+              ambiente: item.ambiente,
+              porte: item.porte,
+            })}>
+              <Ionicons name="chevron-forward-outline" size={20} color="#FFF" />
             </TouchableOpacity>
           </View>
         </View>
@@ -54,7 +65,7 @@ export default function PlantListScreen({ navigation }: Props) {
           {item.porte ? `Porte: ${item.porte} | ` : ''}Ambiente: {item.ambiente}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   const renderContent = () => {

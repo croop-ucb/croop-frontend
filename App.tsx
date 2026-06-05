@@ -6,6 +6,8 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import Svg, { Path, Text as SvgText, TextPath, Defs } from 'react-native-svg';
 import RootNavigator from './src/navigation/RootNavigator';
+import { navigationRef } from './src/navigation/navigationRef';
+import { loadToken } from './src/services/tokenStore';
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,9 +44,14 @@ export default function App() {
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    // Reduzi para 3 segundos para você não ter que esperar tanto nos testes!
-    const timer = setTimeout(() => setCarregando(false), 3000);
-    return () => clearTimeout(timer);
+    const init = async () => {
+      await Promise.all([
+        loadToken(),
+        new Promise(resolve => setTimeout(resolve, 3000)),
+      ]);
+      setCarregando(false);
+    };
+    init();
   }, []);
 
   if (carregando) {
@@ -78,7 +85,7 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <RootNavigator />
     </NavigationContainer>
   );

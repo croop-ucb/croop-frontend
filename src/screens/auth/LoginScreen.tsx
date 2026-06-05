@@ -10,7 +10,7 @@ import { AuthStackParamList, RootStackParamList } from '../../types/navigation';
 import ScreenBackground from '../../components/ScreenBackground';
 import CroopLogo from '../../components/CroopLogo';
 import { login } from '../../services/authService';
-import { setToken } from '../../services/tokenStore';
+import { saveToken } from '../../services/tokenStore';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
@@ -31,7 +31,7 @@ export default function LoginScreen({ navigation }: Props) {
     setLoading(true);
     try {
       const data = await login(email.trim(), password);
-      setToken(data.access_token);
+      await saveToken(data.access_token);
       navigation
         .getParent<NativeStackNavigationProp<RootStackParamList>>()
         ?.navigate('PlantList');

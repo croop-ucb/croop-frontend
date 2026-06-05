@@ -5,6 +5,13 @@ export interface CadastroResponse {
   data_cadastro: string;
 }
 
+export interface UsuarioResponse {
+  id_usuario: number;
+  nome: string;
+  email: string;
+  data_cadastro: string;
+}
+
 export interface LoginResponse {
   access_token: string;
   token_type: string;
@@ -20,6 +27,16 @@ export interface EspecieResponse {
   frequencia_media_irrigacao: number | null;
   necessidade_luz: string | null;
   observacoes_cuidado: string | null;
+}
+
+export interface AtualizarPlantaPayload {
+  id_especie?: number;
+  nome_personalizado?: string;
+  porte?: string;
+  ambiente?: string;
+  localizacao_descricao?: string;
+  observacoes?: string;
+  ativa?: boolean;
 }
 
 export interface CriarPlantaPayload {

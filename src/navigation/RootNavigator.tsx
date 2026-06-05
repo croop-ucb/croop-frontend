@@ -4,7 +4,7 @@ import { RootStackParamList } from '../types/navigation';
 import { loadToken } from '../services/tokenStore';
 import OnboardingScreen from '../screens/onboarding/OnboardingScreen';
 import AuthNavigator from './AuthNavigator';
-import PlantListScreen from '../screens/plants/PlantListScreen';
+import AppNavigator from './AppNavigator';
 import PlantCreateScreen from '../screens/plants/PlantCreateScreen';
 import PlantDetailScreen from '../screens/plants/PlantDetailScreen';
 import PlantEditScreen from '../screens/plants/PlantEditScreen';
@@ -19,7 +19,7 @@ export default function RootNavigator() {
 
   useEffect(() => {
     loadToken().then((token) => {
-      setInitialRoute(token ? 'PlantList' : 'Onboarding');
+      setInitialRoute(token ? 'MainTabs' : 'Onboarding');
     });
   }, []);
 
@@ -32,7 +32,7 @@ export default function RootNavigator() {
     >
       <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       <Stack.Screen name="Auth" component={AuthNavigator} />
-      <Stack.Screen name="PlantList" component={PlantListScreen} />
+      <Stack.Screen name="MainTabs" component={AppNavigator} />
       <Stack.Screen name="PlantCreate" component={PlantCreateScreen} />
       <Stack.Screen name="PlantDetail" component={PlantDetailScreen} />
       <Stack.Screen name="PlantEdit" component={PlantEditScreen} />

@@ -51,6 +51,7 @@ export default function ProfileScreen({ navigation }: Props) {
             <CroopLogo width={140} height={55} curve="M 40,80 Q 200,10 360,80" fontSize={55} shadowDy={4} />
           </View>
           <View style={styles.backButton} />
+          <CroopLogo width={140} height={55} curve="M 40,80 Q 200,10 360,80" fontSize={55} shadowDy={4} />
         </View>
 
         <View style={styles.content}>
@@ -115,6 +116,10 @@ const styles = StyleSheet.create({
   },
   backButton: { width: 40, alignItems: 'flex-start' },
   logoContainer: { flex: 1, alignItems: 'center' },
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 4,
+  },
   content: {
     flex: 1,
     paddingHorizontal: 24,

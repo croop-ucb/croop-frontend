@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 const TOKEN_KEY = 'croop_token';
@@ -6,11 +7,19 @@ let _token: string | null = null;
 
 export async function saveToken(token: string): Promise<void> {
   _token = token;
-  await SecureStore.setItemAsync(TOKEN_KEY, token);
+  if (Platform.OS === 'web') {
+    localStorage.setItem(TOKEN_KEY, token);
+  } else {
+    await SecureStore.setItemAsync(TOKEN_KEY, token);
+  }
 }
 
 export async function loadToken(): Promise<string | null> {
-  _token = await SecureStore.getItemAsync(TOKEN_KEY);
+  if (Platform.OS === 'web') {
+    _token = localStorage.getItem(TOKEN_KEY);
+  } else {
+    _token = await SecureStore.getItemAsync(TOKEN_KEY);
+  }
   return _token;
 }
 
@@ -20,5 +29,9 @@ export function getToken(): string | null {
 
 export async function clearToken(): Promise<void> {
   _token = null;
-  await SecureStore.deleteItemAsync(TOKEN_KEY);
+  if (Platform.OS === 'web') {
+    localStorage.removeItem(TOKEN_KEY);
+  } else {
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+  }
 }

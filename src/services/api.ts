@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { getToken } from './tokenStore';
+import { getToken, clearToken } from './tokenStore';
+import { navigationRef } from '../navigation/navigationRef';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://10.0.2.2:8000';
 
@@ -17,4 +18,18 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      await clearToken();
+      if (navigationRef.isReady()) {
+        navigationRef.reset({ index: 0, routes: [{ name: 'Auth' }] });
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

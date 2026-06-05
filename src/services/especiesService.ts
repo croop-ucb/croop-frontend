@@ -7,3 +7,8 @@ export async function buscarEspecies(busca?: string): Promise<EspecieResponse[]>
   });
   return response.data;
 }
+
+export async function getEspecie(id: number): Promise<EspecieResponse> {
+  const response = await api.get<EspecieResponse>(`/especies/${id}`);
+  return response.data;
+}

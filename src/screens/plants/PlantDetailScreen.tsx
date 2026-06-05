@@ -1,18 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet, View, Text, TouchableOpacity,
-  SafeAreaView, StatusBar,
+  SafeAreaView, StatusBar, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
 import ScreenBackground from '../../components/ScreenBackground';
 import CroopLogo from '../../components/CroopLogo';
+import { getEspecie } from '../../services/especiesService';
+import { EspecieResponse } from '../../types/api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PlantDetail'>;
 
 export default function PlantDetailScreen({ route, navigation }: Props) {
-  const { plantaId, nome, ambiente, porte } = route.params;
+  const { plantaId, nome, ambiente, porte, id_especie } = route.params;
+
+  const [especie, setEspecie] = useState<EspecieResponse | null>(null);
+  const [carregandoEspecie, setCarregandoEspecie] = useState(true);
+
+  useEffect(() => {
+    getEspecie(id_especie)
+      .then(setEspecie)
+      .catch(() => setEspecie(null))
+      .finally(() => setCarregandoEspecie(false));
+  }, [id_especie]);
 
   return (
     <ScreenBackground overlayOpacity={0.8}>
@@ -32,6 +44,17 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
         <View style={styles.content}>
           <Text style={styles.plantaNome}>{nome}</Text>
 
+          {carregandoEspecie ? (
+            <ActivityIndicator size="small" color="#4CAF50" style={styles.especieLoader} />
+          ) : especie && (
+            <View style={styles.especieContainer}>
+              <Text style={styles.especieNome}>{especie.nome_comum}</Text>
+              {especie.nome_cientifico && (
+                <Text style={styles.especieCientifico}>{especie.nome_cientifico}</Text>
+              )}
+            </View>
+          )}
+
           <View style={styles.infoCard}>
             <View style={styles.infoRow}>
               <Ionicons name="leaf-outline" size={18} color="#4CAF50" />
@@ -43,6 +66,13 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
                 <Ionicons name="resize-outline" size={18} color="#4CAF50" />
                 <Text style={styles.infoLabel}>Porte</Text>
                 <Text style={styles.infoValue}>{porte}</Text>
+              </View>
+            )}
+            {especie?.necessidade_luz && (
+              <View style={[styles.infoRow, styles.infoRowBorder]}>
+                <Ionicons name="sunny-outline" size={18} color="#4CAF50" />
+                <Text style={styles.infoLabel}>Luz</Text>
+                <Text style={styles.infoValue}>{especie.necessidade_luz}</Text>
               </View>
             )}
           </View>
@@ -81,14 +111,30 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingTop: 20,
   },
   plantaNome: {
     color: '#FFF',
     fontSize: 28,
     fontWeight: '300',
     textAlign: 'center',
-    marginBottom: 28,
+    marginBottom: 8,
+  },
+  especieLoader: { marginBottom: 20 },
+  especieContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  especieNome: {
+    color: '#4CAF50',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  especieCientifico: {
+    color: 'rgba(255,255,255,0.45)',
+    fontSize: 13,
+    fontStyle: 'italic',
+    marginTop: 2,
   },
   infoCard: {
     backgroundColor: 'rgba(255,255,255,0.05)',
@@ -120,9 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  actions: {
-    gap: 14,
-  },
+  actions: { gap: 14 },
   btnPrimary: {
     backgroundColor: '#4CAF50',
     borderRadius: 16,
@@ -136,11 +180,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
-  btnPrimaryText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  btnPrimaryText: { color: '#FFF', fontSize: 16, fontWeight: 'bold' },
   btnSecondary: {
     borderRadius: 16,
     height: 54,
@@ -151,12 +191,6 @@ const styles = StyleSheet.create({
     borderColor: '#4CAF50',
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
-  btnSecondaryText: {
-    color: '#4CAF50',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  btnIcon: {
-    marginRight: 8,
-  },
+  btnSecondaryText: { color: '#4CAF50', fontSize: 16, fontWeight: '600' },
+  btnIcon: { marginRight: 8 },
 });

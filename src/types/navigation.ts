@@ -12,7 +12,7 @@ export type RootStackParamList = {
   Auth: NavigatorScreenParams<AuthStackParamList> | undefined;
   PlantList: undefined;
   PlantCreate: undefined;
-  PlantDetail: { plantaId: number; nome: string; ambiente: string; porte: string | null };
+  PlantDetail: { plantaId: number; nome: string; ambiente: string; porte: string | null; id_especie: number };
   Schedule: { plantaId: number; nome: string };
   Notification: undefined;
 };

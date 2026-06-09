@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getToken, clearToken } from './tokenStore';
 import { navigationRef } from '../navigation/navigationRef';
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://10.0.2.2:8000';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://croop.ddns.net';
 
 export const api = axios.create({
   baseURL: BASE_URL,

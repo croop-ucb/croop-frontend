@@ -243,13 +243,23 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
 
           {/* Ações (#12, #13) */}
           <View style={styles.actions}>
-            <TouchableOpacity
-              style={styles.btnPrimary}
-              onPress={() => navigation.navigate('Schedule', { plantaId, nome })}
-            >
-              <Ionicons name="calendar-outline" size={20} color="#FFF" style={styles.btnIcon} />
-              <Text style={styles.btnPrimaryText}>Ver Cronograma</Text>
-            </TouchableOpacity>
+            <View style={styles.btnRow}>
+              <TouchableOpacity
+                style={[styles.btnPrimary, styles.btnRowItem]}
+                onPress={() => navigation.navigate('Schedule', { plantaId, nome })}
+              >
+                <Ionicons name="calendar-outline" size={18} color="#FFF" style={styles.btnIcon} />
+                <Text style={styles.btnPrimaryText}>Ver Cronograma</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.btnPrimary, styles.btnRowItem]}
+                onPress={() => navigation.navigate('UmidadeHistorico', { plantaId, nome })}
+              >
+                <Ionicons name="analytics-outline" size={18} color="#FFF" style={styles.btnIcon} />
+                <Text style={styles.btnPrimaryText}>Histórico de Umidade</Text>
+              </TouchableOpacity>
+            </View>
 
             <TouchableOpacity
               style={[styles.btnSecondary, btnIrrigarDesabilitado && styles.btnDesabilitado]}
@@ -453,6 +463,8 @@ const styles = StyleSheet.create({
 
   /* Actions */
   actions: { gap: 14 },
+  btnRow: { flexDirection: 'row', gap: 12 },
+  btnRowItem: { flex: 1, height: undefined, paddingVertical: 14 },
   btnPrimary: {
     backgroundColor: '#4CAF50',
     borderRadius: 16,
@@ -466,7 +478,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
-  btnPrimaryText: { color: '#FFF', fontSize: 16, fontWeight: 'bold' },
+  btnPrimaryText: { color: '#FFF', fontSize: 14, fontWeight: 'bold', textAlign: 'center', flexShrink: 1 },
   btnSecondary: {
     borderRadius: 16,
     height: 54,

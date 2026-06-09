@@ -99,3 +99,25 @@ export interface CronogramaResponse {
   periodo_fim: string | null;
   itens: ItemCronogramaResponse[];
 }
+
+export interface LeituraResponse {
+  umidade_percentual: number;
+  adc_bruto: number;
+  timestamp: string;
+}
+
+export interface IrrigacaoEventoResponse {
+  duracao_segundos: number;
+  timestamp: string;
+}
+
+export interface StatusPlantaResponse {
+  ultima_leitura: LeituraResponse | null;
+  ultimo_evento_irrigacao: IrrigacaoEventoResponse | null;
+  tem_comando_pendente: boolean;
+}
+
+export interface IrrigarResponse {
+  status: string;
+  comando_pendente: boolean;
+}

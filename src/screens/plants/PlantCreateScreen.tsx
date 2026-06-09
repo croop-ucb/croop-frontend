@@ -160,7 +160,7 @@ export default function PlantCreateScreen({ navigation }: Props) {
                       <FlatList
                         data={resultadosBusca}
                         keyExtractor={(item) => String(item.id_especie)}
-                        scrollEnabled={false}
+                        nestedScrollEnabled
                         renderItem={({ item }) => (
                           <TouchableOpacity
                             style={styles.dropdownItem}

@@ -22,6 +22,7 @@ export type RootStackParamList = {
   PlantDetail: { plantaId: number; nome: string; ambiente: string; porte: string | null; id_especie: number };
   PlantEdit: { plantaId: number };
   Schedule: { plantaId: number; nome: string };
+  UmidadeHistorico: { plantaId: number; nome: string };
   Notification: undefined;
   Profile: undefined;
 };

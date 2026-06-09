@@ -9,7 +9,7 @@ import PlantCreateScreen from '../screens/plants/PlantCreateScreen';
 import PlantDetailScreen from '../screens/plants/PlantDetailScreen';
 import PlantEditScreen from '../screens/plants/PlantEditScreen';
 import ScheduleScreen from '../screens/plants/ScheduleScreen';
-import UmidadeHistoricoScreen from '../screens/plants/UmidadeHistoricoScreen';
+import HistoricoScreen from '../screens/plants/HistoricoScreen';
 import NotificationScreen from '../screens/notification/NotificationScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 
@@ -38,7 +38,7 @@ export default function RootNavigator() {
       <Stack.Screen name="PlantDetail" component={PlantDetailScreen} />
       <Stack.Screen name="PlantEdit" component={PlantEditScreen} />
       <Stack.Screen name="Schedule" component={ScheduleScreen} />
-      <Stack.Screen name="UmidadeHistorico" component={UmidadeHistoricoScreen} />
+      <Stack.Screen name="Historico" component={HistoricoScreen} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>

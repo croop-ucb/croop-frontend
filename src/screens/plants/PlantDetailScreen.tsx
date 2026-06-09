@@ -71,7 +71,23 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
     }
   }, [plantaId]);
 
-  useFocusEffect(useCallback(() => { carregarStatus(); }, [carregarStatus]));
+  const refreshStatus = useCallback(async () => {
+    try {
+      const data = await getStatus(plantaId);
+      setStatus(data);
+      setErroStatus(null);
+    } catch {
+      // Silencioso — não derruba dados existentes em falha de background
+    }
+  }, [plantaId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      carregarStatus();
+      const intervalo = setInterval(refreshStatus, 30000);
+      return () => clearInterval(intervalo);
+    }, [carregarStatus, refreshStatus]),
+  );
 
   const confirmarIrrigacao = useCallback(async () => {
     setIrrigando(true);
@@ -173,6 +189,10 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
                   <View style={styles.umidadeLabelRow}>
                     <Ionicons name="water-outline" size={16} color={classificacao.cor} />
                     <Text style={[styles.umidadeLabelTexto, { color: classificacao.cor }]}>Umidade atual</Text>
+                    <View style={styles.liveBadge}>
+                      <View style={styles.liveDot} />
+                      <Text style={styles.liveTexto}>ao vivo</Text>
+                    </View>
                   </View>
                   {comandoPendente && (
                     <View style={styles.pendenteBadge}>
@@ -254,10 +274,10 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
 
               <TouchableOpacity
                 style={[styles.btnPrimary, styles.btnRowItem]}
-                onPress={() => navigation.navigate('UmidadeHistorico', { plantaId, nome })}
+                onPress={() => navigation.navigate('Historico', { plantaId, nome })}
               >
                 <Ionicons name="analytics-outline" size={18} color="#FFF" style={styles.btnIcon} />
-                <Text style={styles.btnPrimaryText}>Histórico de Umidade</Text>
+                <Text style={styles.btnPrimaryText}>Ver Histórico</Text>
               </TouchableOpacity>
             </View>
 
@@ -506,4 +526,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   btnDangerText: { color: '#FF5252', fontSize: 16, fontWeight: '600' },
+  liveBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 6 },
+  liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#4CAF50' },
+  liveTexto: { color: 'rgba(76,175,80,0.8)', fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
 });

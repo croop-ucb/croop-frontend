@@ -123,6 +123,7 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
   const umidadePct = status?.ultima_leitura?.umidade_percentual;
   const classificacao = umidadePct !== undefined ? classificarUmidade(umidadePct) : null;
   const comandoPendente = status?.tem_comando_pendente ?? false;
+  const dispositivoOnline = status?.dispositivo_online ?? true;
   const btnIrrigarDesabilitado = comandoPendente || irrigando || carregandoStatus;
 
   return (
@@ -178,8 +179,16 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
 
             {!carregandoStatus && !erroStatus && !status?.ultima_leitura && (
               <View style={styles.estadoCentro}>
-                <Ionicons name="hardware-chip-outline" size={24} color="rgba(255,255,255,0.35)" />
-                <Text style={styles.estadoTextoFraco}>Aguardando primeira leitura do sensor.</Text>
+                <Ionicons
+                  name={dispositivoOnline ? 'hardware-chip-outline' : 'cloud-offline-outline'}
+                  size={24}
+                  color={dispositivoOnline ? 'rgba(255,255,255,0.35)' : 'rgba(255,152,0,0.6)'}
+                />
+                <Text style={[styles.estadoTextoFraco, !dispositivoOnline && { color: 'rgba(255,152,0,0.7)' }]}>
+                  {dispositivoOnline
+                    ? 'Aguardando primeira leitura do sensor.'
+                    : 'Dispositivo offline. Aguardando primeira conexão.'}
+                </Text>
               </View>
             )}
 
@@ -189,10 +198,17 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
                   <View style={styles.umidadeLabelRow}>
                     <Ionicons name="water-outline" size={16} color={classificacao.cor} />
                     <Text style={[styles.umidadeLabelTexto, { color: classificacao.cor }]}>Umidade atual</Text>
-                    <View style={styles.liveBadge}>
-                      <View style={styles.liveDot} />
-                      <Text style={styles.liveTexto}>ao vivo</Text>
-                    </View>
+                    {dispositivoOnline ? (
+                      <View style={styles.liveBadge}>
+                        <View style={styles.liveDot} />
+                        <Text style={styles.liveTexto}>ao vivo</Text>
+                      </View>
+                    ) : (
+                      <View style={styles.offlineBadge}>
+                        <View style={styles.offlineDot} />
+                        <Text style={styles.offlineTexto}>offline</Text>
+                      </View>
+                    )}
                   </View>
                   {comandoPendente && (
                     <View style={styles.pendenteBadge}>
@@ -233,6 +249,15 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
                   </Text>
                 ) : (
                   <Text style={styles.timestampTexto}>Sem eventos de irrigação registrados.</Text>
+                )}
+
+                {!dispositivoOnline && (
+                  <View style={styles.offlineBanner}>
+                    <Ionicons name="cloud-offline-outline" size={13} color="#FF9800" />
+                    <Text style={styles.offlineBannerTexto}>
+                      Dispositivo offline · aguardando reconexão
+                    </Text>
+                  </View>
                 )}
               </>
             )}
@@ -529,4 +554,20 @@ const styles = StyleSheet.create({
   liveBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 6 },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#4CAF50' },
   liveTexto: { color: 'rgba(76,175,80,0.8)', fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
+  offlineBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 6 },
+  offlineDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#FF9800' },
+  offlineTexto: { color: 'rgba(255,152,0,0.8)', fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
+  offlineBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 10,
+    backgroundColor: 'rgba(255,152,0,0.08)',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,152,0,0.2)',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  offlineBannerTexto: { color: '#FF9800', fontSize: 11, fontWeight: '500', flex: 1 },
 });

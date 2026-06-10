@@ -37,6 +37,8 @@ export interface AtualizarPlantaPayload {
   localizacao_descricao?: string;
   observacoes?: string;
   ativa?: boolean;
+  faixa_umidade_min?: number | null;
+  faixa_umidade_max?: number | null;
 }
 
 export interface CriarPlantaPayload {
@@ -47,6 +49,8 @@ export interface CriarPlantaPayload {
   localizacao_descricao?: string;
   observacoes?: string;
   ativa?: boolean;
+  faixa_umidade_min?: number;
+  faixa_umidade_max?: number;
 }
 
 export interface PlantaResponse {
@@ -60,6 +64,8 @@ export interface PlantaResponse {
   observacoes: string | null;
   ativa: boolean;
   data_cadastro: string;
+  faixa_umidade_min: number | null;
+  faixa_umidade_max: number | null;
 }
 
 export interface NotificacaoResponse {
@@ -115,6 +121,7 @@ export interface StatusPlantaResponse {
   ultima_leitura: LeituraResponse | null;
   ultimo_evento_irrigacao: IrrigacaoEventoResponse | null;
   tem_comando_pendente: boolean;
+  dispositivo_online: boolean;
 }
 
 export interface IrrigarResponse {

@@ -20,6 +20,19 @@ import { NotificacaoResponse } from '../../types/api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Notification'>;
 
+type TipoInfo = { titulo: string; icone: React.ComponentProps<typeof Ionicons>['name']; cor: string };
+
+function resolverTipoNotificacao(tipo: string | null): TipoInfo {
+  switch (tipo) {
+    case 'umidade_critica':
+      return { titulo: 'Umidade Crítica', icone: 'alert-circle', cor: '#FF5252' };
+    case 'irrigacao_automatica':
+      return { titulo: 'Irrigação Automática', icone: 'water', cor: '#42A5F5' };
+    default:
+      return { titulo: 'Alerta de Cuidado', icone: 'leaf', cor: '#4CAF50' };
+  }
+}
+
 export default function NotificationScreen({ navigation }: Props) {
   const [notificacoes, setNotificacoes] = useState<NotificacaoResponse[]>([]);
   const [lidas, setLidas] = useState<number[]>([]);
@@ -68,13 +81,14 @@ export default function NotificationScreen({ navigation }: Props) {
     if (!item) return null;
 
     const isLida = lidas.includes(item.id_notificacao) || item.lida;
+    const tipoInfo = resolverTipoNotificacao(item.tipo_notificacao);
 
     let dataFormatada = '--/--';
     if (item.data_envio) {
       try {
         dataFormatada = new Date(item.data_envio).toLocaleDateString('pt-BR', {
           hour: '2-digit',
-          minute: '2-digit'
+          minute: '2-digit',
         });
       } catch (e) {
         dataFormatada = String(item.data_envio);
@@ -82,18 +96,22 @@ export default function NotificationScreen({ navigation }: Props) {
     }
 
     return (
-      <TouchableOpacity 
-        style={[styles.notifCard, isLida && styles.notifLida]} 
+      <TouchableOpacity
+        style={[styles.notifCard, isLida && styles.notifLida]}
         onPress={() => handleNotificacaoPress(item)}
         activeOpacity={0.7}
       >
-        <View style={styles.profileCircle}>
-          <Ionicons name={isLida ? "mail-open-outline" : "leaf"} size={20} color={isLida ? "#888" : "#4CAF50"} />
+        <View style={[styles.profileCircle, { backgroundColor: isLida ? 'rgba(255,255,255,0.08)' : `${tipoInfo.cor}22` }]}>
+          <Ionicons
+            name={isLida ? 'mail-open-outline' : tipoInfo.icone}
+            size={20}
+            color={isLida ? '#888' : tipoInfo.cor}
+          />
         </View>
 
         <View style={styles.notifContent}>
           <View style={styles.notifHeader}>
-            <Text style={styles.notifTitle}>Alerta de Cuidado</Text>
+            <Text style={[styles.notifTitle, !isLida && { color: tipoInfo.cor }]}>{tipoInfo.titulo}</Text>
             <Text style={styles.notifTime}>{dataFormatada}</Text>
           </View>
           <Text style={styles.notifText} numberOfLines={2}>
@@ -179,18 +197,20 @@ export default function NotificationScreen({ navigation }: Props) {
                   </TouchableOpacity>
 
                   <View style={styles.modalBody}>
-                    <View style={styles.modalHeader}>
-                      <Ionicons name="information-circle-outline" size={24} color="#4CAF50" style={styles.modalIcon} />
-                      <Text style={styles.modalTitle}>Detalhes do Cuidado</Text>
-                    </View>
-                    
-                    <Text style={styles.modalItemTitle}>
-                      Atenção com sua Planta
-                    </Text>
-                    
-                    <Text style={styles.modalDescription}>
-                      {notificacaoSelecionada?.mensagem || 'Nenhum detalhe adicional fornecido.'}
-                    </Text>
+                    {(() => {
+                      const info = resolverTipoNotificacao(notificacaoSelecionada?.tipo_notificacao ?? null);
+                      return (
+                        <>
+                          <View style={styles.modalHeader}>
+                            <Ionicons name={info.icone} size={24} color={info.cor} style={styles.modalIcon} />
+                            <Text style={[styles.modalTitle, { color: info.cor }]}>{info.titulo}</Text>
+                          </View>
+                          <Text style={styles.modalDescription}>
+                            {notificacaoSelecionada?.mensagem || 'Nenhum detalhe adicional fornecido.'}
+                          </Text>
+                        </>
+                      );
+                    })()}
                   </View>
 
                   <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalOkBtn}>

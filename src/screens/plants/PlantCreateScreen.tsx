@@ -30,6 +30,8 @@ export default function PlantCreateScreen({ navigation }: Props) {
   const [porte, setPorte] = useState('');
   const [localizacao, setLocalizacao] = useState('');
   const [observacoes, setObservacoes] = useState('');
+  const [faixaUmidadeMin, setFaixaUmidadeMin] = useState('');
+  const [faixaUmidadeMax, setFaixaUmidadeMax] = useState('');
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -80,6 +82,22 @@ export default function PlantCreateScreen({ navigation }: Props) {
       return;
     }
 
+    const minVal = faixaUmidadeMin.trim() ? parseFloat(faixaUmidadeMin) : undefined;
+    const maxVal = faixaUmidadeMax.trim() ? parseFloat(faixaUmidadeMax) : undefined;
+
+    if (minVal !== undefined && (isNaN(minVal) || minVal < 0 || minVal > 100)) {
+      setErro('Umidade mínima deve ser um valor entre 0 e 100.');
+      return;
+    }
+    if (maxVal !== undefined && (isNaN(maxVal) || maxVal < 0 || maxVal > 100)) {
+      setErro('Umidade máxima deve ser um valor entre 0 e 100.');
+      return;
+    }
+    if (minVal !== undefined && maxVal !== undefined && minVal >= maxVal) {
+      setErro('A umidade mínima deve ser menor que a máxima.');
+      return;
+    }
+
     setLoading(true);
     try {
       await criarPlanta({
@@ -90,6 +108,8 @@ export default function PlantCreateScreen({ navigation }: Props) {
         localizacao_descricao: localizacao.trim() || undefined,
         observacoes: observacoes.trim() || undefined,
         ativa: true,
+        faixa_umidade_min: minVal,
+        faixa_umidade_max: maxVal,
       });
       navigation.goBack();
     } catch (error) {
@@ -255,6 +275,34 @@ export default function PlantCreateScreen({ navigation }: Props) {
                 />
               </View>
 
+              {/* Faixa de umidade */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Faixa de umidade:</Text>
+                <View style={styles.inputRow}>
+                  <TextInput
+                    style={[styles.input, styles.inputHalf]}
+                    value={faixaUmidadeMin}
+                    onChangeText={setFaixaUmidadeMin}
+                    onFocus={() => setMostrarResultados(false)}
+                    keyboardType="numeric"
+                    placeholder="Mín %"
+                    placeholderTextColor="rgba(255,255,255,0.4)"
+                  />
+                  <TextInput
+                    style={[styles.input, styles.inputHalf]}
+                    value={faixaUmidadeMax}
+                    onChangeText={setFaixaUmidadeMax}
+                    onFocus={() => setMostrarResultados(false)}
+                    keyboardType="numeric"
+                    placeholder="Máx %"
+                    placeholderTextColor="rgba(255,255,255,0.4)"
+                  />
+                </View>
+                <Text style={styles.inputHint}>
+                  Se não preenchida, será usado o padrão da espécie ou 30% – 80%.
+                </Text>
+              </View>
+
               {erro && <Text style={styles.erroText}>{erro}</Text>}
 
               <View style={styles.buttons}>
@@ -323,6 +371,9 @@ const styles = StyleSheet.create({
   selectorBtnActive: { backgroundColor: '#4CAF50', borderColor: '#4CAF50' },
   selectorText: { color: 'rgba(255,255,255,0.6)', fontWeight: '500' },
   selectorTextActive: { color: '#FFF' },
+  inputRow: { flexDirection: 'row', gap: 10 },
+  inputHalf: { flex: 1 },
+  inputHint: { color: 'rgba(255,255,255,0.4)', fontSize: 12, marginTop: 6 },
   erroText: { color: '#FF6B6B', fontSize: 13, textAlign: 'center', marginBottom: 10 },
   buttons: { flexDirection: 'row', gap: 12, marginTop: 20, justifyContent: 'center' },
   buttonMain: {

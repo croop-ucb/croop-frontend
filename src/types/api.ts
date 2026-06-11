@@ -128,3 +128,8 @@ export interface IrrigarResponse {
   status: string;
   comando_pendente: boolean;
 }
+
+export interface GerarTokenResponse {
+  token: string;
+  expires_in: number;
+}

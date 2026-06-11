@@ -4,6 +4,7 @@ import {
   LeituraResponse,
   IrrigacaoEventoResponse,
   IrrigarResponse,
+  GerarTokenResponse,
 } from '../types/api';
 
 export async function getStatus(plantaId: number): Promise<StatusPlantaResponse> {
@@ -35,5 +36,10 @@ export async function getIrrigacoes(
 
 export async function irrigarManualmente(plantaId: number): Promise<IrrigarResponse> {
   const response = await api.post<IrrigarResponse>('/irrigar', { planta_id: plantaId });
+  return response.data;
+}
+
+export async function gerarToken(plantaId: number): Promise<GerarTokenResponse> {
+  const response = await api.post<GerarTokenResponse>('/dispositivos/gerar-token', { planta_id: plantaId });
   return response.data;
 }

@@ -25,4 +25,5 @@ export type RootStackParamList = {
   Historico: { plantaId: number; nome: string };
   Notification: undefined;
   Profile: undefined;
+  IoTConnect: { plantaId: number; nome: string };
 };

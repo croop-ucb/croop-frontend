@@ -38,11 +38,13 @@ function formatarHora(iso: string): string {
   return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 }
 
-function formatarDuracao(s: number): string {
-  if (s < 60) return `${s}s`;
-  const min = Math.floor(s / 60);
-  const seg = s % 60;
-  return seg > 0 ? `${min}min ${seg}s` : `${min}min`;
+function umidadeAntesIrrigacao(tsIrr: string, leituras: LeituraResponse[]): number | null {
+  const t = new Date(tsIrr).getTime();
+  const antes = leituras.filter((l) => new Date(l.timestamp).getTime() <= t);
+  if (antes.length === 0) return null;
+  return antes.reduce((a, b) =>
+    new Date(a.timestamp).getTime() > new Date(b.timestamp).getTime() ? a : b,
+  ).umidade_percentual;
 }
 
 const chartConfig = {
@@ -127,7 +129,12 @@ export default function HistoricoScreen({ route, navigation }: Props) {
   const labelIntIrr = Math.max(1, Math.ceil(pontosIrrigacoes.length / 5));
   const irrigacoesChartData = {
     labels: pontosIrrigacoes.map((e, i) => i % labelIntIrr === 0 ? formatarHora(e.timestamp) : ''),
-    datasets: [{ data: pontosIrrigacoes.map((e) => e.duracao_segundos) }],
+    datasets: [{
+      data: pontosIrrigacoes.map((e) => {
+        const u = umidadeAntesIrrigacao(e.timestamp, leituras);
+        return u !== null ? Math.round(u) : 0;
+      }),
+    }],
   };
 
   // --- Helpers de renderização ---
@@ -221,10 +228,10 @@ export default function HistoricoScreen({ route, navigation }: Props) {
         <View style={styles.chartContainer}>
           <BarChart
             data={irrigacoesChartData}
-            width={CHART_WIDTH}
+            width={CHART_WIDTH - 16}
             height={200}
             yAxisLabel=""
-            yAxisSuffix="s"
+            yAxisSuffix="%"
             fromZero
             showValuesOnTopOfBars
             chartConfig={{ ...chartConfig, barPercentage: 0.6 }}
@@ -237,21 +244,25 @@ export default function HistoricoScreen({ route, navigation }: Props) {
         </View>
       )}
       <Text style={[styles.secaoTitulo, { marginTop: 28 }]}>HISTÓRICO COMPLETO</Text>
-      {renderTabelaHeader('Data / Hora', 'Duração')}
+      {renderTabelaHeader('Data / Hora', 'Umidade')}
     </>
   );
 
-  const renderItemIrrigacao = ({ item, index }: { item: IrrigacaoEventoResponse; index: number }) => (
-    <View style={[styles.tabelaRow, index % 2 !== 0 && styles.tabelaRowAlt]}>
-      <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Ionicons name="water-outline" size={13} color="rgba(76,175,80,0.5)" />
-        <Text style={styles.celula}>{formatarDataHora(item.timestamp)}</Text>
+  const renderItemIrrigacao = ({ item, index }: { item: IrrigacaoEventoResponse; index: number }) => {
+    const umidade = umidadeAntesIrrigacao(item.timestamp, leituras);
+    const { cor } = umidade !== null ? classificarUmidade(umidade) : { cor: 'rgba(255,255,255,0.4)' };
+    return (
+      <View style={[styles.tabelaRow, index % 2 !== 0 && styles.tabelaRowAlt]}>
+        <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Ionicons name="water-outline" size={13} color="rgba(76,175,80,0.5)" />
+          <Text style={styles.celula}>{formatarDataHora(item.timestamp)}</Text>
+        </View>
+        <Text style={[styles.celula, { flex: 1, textAlign: 'right', color: cor, fontWeight: '600' }]}>
+          {umidade !== null ? `${umidade.toFixed(1)}%` : '–'}
+        </Text>
       </View>
-      <Text style={[styles.celula, { flex: 1, textAlign: 'right', color: '#4CAF50', fontWeight: '600' }]}>
-        {formatarDuracao(item.duracao_segundos)}
-      </Text>
-    </View>
-  );
+    );
+  };
 
   const IrrigacoesFooter = () => {
     if (carregandoMais) return <View style={styles.footerLoader}><ActivityIndicator size="small" color="#4CAF50" /></View>;

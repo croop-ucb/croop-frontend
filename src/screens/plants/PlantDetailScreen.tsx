@@ -50,6 +50,9 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
   const [carregandoStatus, setCarregandoStatus] = useState(true);
   const [erroStatus, setErroStatus] = useState<string | null>(null);
   const [irrigando, setIrrigando] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
+  const dispositivoOnline = status?.dispositivo_online ?? true;
 
   useEffect(() => {
     getEspecie(id_especie)
@@ -83,11 +86,18 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
+      setIsFocused(true);
       carregarStatus();
-      const intervalo = setInterval(refreshStatus, 30000);
-      return () => clearInterval(intervalo);
-    }, [carregarStatus, refreshStatus]),
+      return () => setIsFocused(false);
+    }, [carregarStatus]),
   );
+
+  useEffect(() => {
+    if (!isFocused) return;
+    const ms = dispositivoOnline ? 30000 : 5000;
+    const id = setInterval(refreshStatus, ms);
+    return () => clearInterval(id);
+  }, [isFocused, dispositivoOnline, refreshStatus]);
 
   const confirmarIrrigacao = useCallback(async () => {
     setIrrigando(true);
@@ -123,7 +133,6 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
   const umidadePct = status?.ultima_leitura?.umidade_percentual;
   const classificacao = umidadePct !== undefined ? classificarUmidade(umidadePct) : null;
   const comandoPendente = status?.tem_comando_pendente ?? false;
-  const dispositivoOnline = status?.dispositivo_online ?? true;
   const btnIrrigarDesabilitado = comandoPendente || irrigando || carregandoStatus;
 
   return (
@@ -305,6 +314,14 @@ export default function PlantDetailScreen({ route, navigation }: Props) {
                 <Text style={styles.btnPrimaryText}>Ver Histórico</Text>
               </TouchableOpacity>
             </View>
+
+            <TouchableOpacity
+              style={styles.btnConectar}
+              onPress={() => navigation.navigate('IoTConnect', { plantaId, nome })}
+            >
+              <Ionicons name="bluetooth-outline" size={18} color="#42A5F5" style={styles.btnIcon} />
+              <Text style={styles.btnConectarText}>Conectar dispositivo</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.btnSecondary, btnIrrigarDesabilitado && styles.btnDesabilitado]}
@@ -551,6 +568,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   btnDangerText: { color: '#FF5252', fontSize: 16, fontWeight: '600' },
+  btnConectar: {
+    borderRadius: 16,
+    height: 54,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#42A5F5',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  btnConectarText: { color: '#42A5F5', fontSize: 16, fontWeight: '600' },
   liveBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 6 },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#4CAF50' },
   liveTexto: { color: 'rgba(76,175,80,0.8)', fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },

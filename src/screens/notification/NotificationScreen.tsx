@@ -28,6 +28,10 @@ function resolverTipoNotificacao(tipo: string | null): TipoInfo {
       return { titulo: 'Umidade Crítica', icone: 'alert-circle', cor: '#FF5252' };
     case 'irrigacao_automatica':
       return { titulo: 'Irrigação Automática', icone: 'water', cor: '#42A5F5' };
+    case 'irrigacao_cronograma':
+      return { titulo: 'Irrigação por Cronograma', icone: 'calendar', cor: '#26C6DA' };
+    case 'falha_sensor':
+      return { titulo: 'Falha no Sensor', icone: 'warning-outline', cor: '#FFCA28' };
     default:
       return { titulo: 'Alerta de Cuidado', icone: 'leaf', cor: '#4CAF50' };
   }
@@ -276,8 +280,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', 
     marginBottom: 6 
   },
-  notifTitle: { color: '#FFF', fontSize: 16, fontWeight: 'bold' },
-  notifTime: { color: '#CCC', fontSize: 12, marginLeft: 'auto' },
+  notifTitle: { color: '#FFF', fontSize: 14, fontWeight: 'bold', flex: 1, marginRight: 8 },
+  notifTime: { color: '#CCC', fontSize: 11, flexShrink: 0 },
   notifText: { color: '#E0E0E0', fontSize: 14, lineHeight: 20 },
   centerState: {
     flex: 1,

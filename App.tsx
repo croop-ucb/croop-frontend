@@ -4,8 +4,8 @@ import {
   Dimensions, Animated, StatusBar,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import Svg, { Path, Text as SvgText, TextPath, Defs } from 'react-native-svg';
 import RootNavigator from './src/navigation/RootNavigator';
+import CroopLogo from './src/components/CroopLogo';
 import { navigationRef } from './src/navigation/navigationRef';
 import { loadToken } from './src/services/tokenStore';
 
@@ -61,18 +61,7 @@ export default function App() {
         {/* Trocamos o ImageBackground por uma View escura segura para evitar a Tela Branca */}
         <View style={styles.safeBackground}>
           <View style={styles.overlay}>
-            <View style={styles.svgWrapper}>
-              <Svg viewBox="0 0 400 200" width={width} height={200}>
-                <Defs>
-                  <Path id="curve" d="M 40,70 Q 200,0 360,70" />
-                </Defs>
-                <SvgText fill="#FFFFFF" fontSize="65" fontWeight="bold">
-                  <TextPath href="#curve" startOffset="50%" textAnchor="middle">
-                    CROOP
-                  </TextPath>
-                </SvgText>
-              </Svg>
-            </View>
+            <CroopLogo width={width * 0.85} height={130} fontSize={70} shadowDy={5} />
 
             <View style={styles.loaderArea}>
               <BouncingDots />
@@ -102,7 +91,6 @@ const styles = StyleSheet.create({
     paddingTop: 80, // Ajustado para dar mais espaço ao SVG topo
     paddingBottom: 60,
   },
-  svgWrapper: { marginTop: 0 },
   loaderArea: { alignItems: 'center', marginBottom: 50 },
   dotRow: { flexDirection: 'row', marginBottom: 20 },
   dot: {

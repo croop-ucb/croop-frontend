@@ -151,13 +151,13 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.5)',
     fontSize: 14,
     marginLeft: 10,
-    flex: 1,
+    marginRight: 8,
   },
   infoValue: {
     color: '#FFF',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
-    flexShrink: 1,
+    flex: 1,
     textAlign: 'right',
   },
   erroText: {

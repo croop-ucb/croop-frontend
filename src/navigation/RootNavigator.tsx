@@ -12,6 +12,7 @@ import ScheduleScreen from '../screens/plants/ScheduleScreen';
 import HistoricoScreen from '../screens/plants/HistoricoScreen';
 import NotificationScreen from '../screens/notification/NotificationScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import IoTConnectScreen from '../screens/plants/IoTConnectScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -41,6 +42,7 @@ export default function RootNavigator() {
       <Stack.Screen name="Historico" component={HistoricoScreen} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="IoTConnect" component={IoTConnectScreen} />
     </Stack.Navigator>
   );
 }

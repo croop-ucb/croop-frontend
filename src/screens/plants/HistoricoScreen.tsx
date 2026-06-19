@@ -38,14 +38,6 @@ function formatarHora(iso: string): string {
   return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 }
 
-function umidadeAntesIrrigacao(tsIrr: string, leituras: LeituraResponse[]): number | null {
-  const t = new Date(tsIrr).getTime();
-  const antes = leituras.filter((l) => new Date(l.timestamp).getTime() <= t);
-  if (antes.length === 0) return null;
-  return antes.reduce((a, b) =>
-    new Date(a.timestamp).getTime() > new Date(b.timestamp).getTime() ? a : b,
-  ).umidade_percentual;
-}
 
 const chartConfig = {
   backgroundGradientFrom: '#0D2412',
@@ -131,7 +123,7 @@ export default function HistoricoScreen({ route, navigation }: Props) {
     labels: pontosIrrigacoes.map((e, i) => i % labelIntIrr === 0 ? formatarHora(e.timestamp) : ''),
     datasets: [{
       data: pontosIrrigacoes.map((e) => {
-        const u = umidadeAntesIrrigacao(e.timestamp, leituras);
+        const u = e.umidade_antes ?? null;
         return u !== null ? Math.round(u) : 0;
       }),
     }],
@@ -249,7 +241,7 @@ export default function HistoricoScreen({ route, navigation }: Props) {
   );
 
   const renderItemIrrigacao = ({ item, index }: { item: IrrigacaoEventoResponse; index: number }) => {
-    const umidade = umidadeAntesIrrigacao(item.timestamp, leituras);
+    const umidade = item.umidade_antes ?? null;
     const { cor } = umidade !== null ? classificarUmidade(umidade) : { cor: 'rgba(255,255,255,0.4)' };
     return (
       <View style={[styles.tabelaRow, index % 2 !== 0 && styles.tabelaRowAlt]}>

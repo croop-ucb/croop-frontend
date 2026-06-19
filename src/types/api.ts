@@ -115,6 +115,7 @@ export interface LeituraResponse {
 export interface IrrigacaoEventoResponse {
   duracao_segundos: number;
   timestamp: string;
+  umidade_antes?: number | null;
 }
 
 export interface StatusPlantaResponse {
